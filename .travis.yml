@@ -1,15 +1,8 @@
 language: cpp
-
-sudo: required
 dist: bionic
 
 jobs:
   include:
-    - os: linux
-      compiler: gcc
-      env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++"
-        
     - os: osx
       osx_image: xcode11
       env:
