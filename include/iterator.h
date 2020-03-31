@@ -5,7 +5,7 @@
 #include <cstddef> //ptrdiff_t
 
 namespace fstl {
-  
+
 struct input_iterator_tag {};
 struct output_iterator_tag {};
 struct forward_iterator_tag : public input_iterator_tag {};
@@ -131,10 +131,10 @@ distance_dispatch(RandomIter first, RandomIter last,
 }
 
 template <class Iter>
-typename iterator_traits<Iter>::difference_type
-distance(Iter first, Iter last) {
+typename iterator_traits<Iter>::difference_type distance(Iter first,
+                                                         Iter last) {
   return distance_dispatch(first, last,
-                          typename iterator_traits<Iter>::iterator_category());
+                           typename iterator_traits<Iter>::iterator_category());
 }
 
 // advance 的 input_iterator_tag 的版本
@@ -162,10 +162,8 @@ void advance_dispatch(RandomIter &i, Distance n, random_access_iterator_tag) {
   i += n;
 }
 
-template <class Iter, class Distance>
-void advance(Iter &i, Distance n) {
+template <class Iter, class Distance> void advance(Iter &i, Distance n) {
   advance_dispatch(i, n, typename iterator_traits<Iter>::iterator_category());
 }
-
 
 }; // namespace fstl

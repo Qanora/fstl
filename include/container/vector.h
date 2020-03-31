@@ -1,13 +1,12 @@
 #pragma once
 
-
 #include "../allocator.h"
-#include "util/reverse_iterator.h"
 #include "../iterator.h"
+#include "util/reverse_iterator.h"
 // #include "util/exceptdef.h"
 #include "algorithm/modifyseq.h"
-#include <algorithm>
 #include "util/uninitialized.h"
+#include <algorithm>
 
 #define INIT_SIZE 16
 namespace fstl {
@@ -149,11 +148,13 @@ public:
   }
 
   reference at(size_type n) {
-    // fstl::THROW_LENGTH_ERROR_IF(!(n < size()), "vector<T>::at() subscript out of range");
+    // fstl::THROW_LENGTH_ERROR_IF(!(n < size()), "vector<T>::at() subscript out
+    // of range");
     return (*this)[n];
   }
   const_reference at(size_type n) const {
-    //fstl::THROW_OUT_OF_RANGE_IF(!(n < size()), "vector<T>::at() subscript out of range");
+    // fstl::THROW_OUT_OF_RANGE_IF(!(n < size()), "vector<T>::at() subscript out
+    // of range");
     return (*this)[n];
   }
 
@@ -234,7 +235,9 @@ public:
     uninitialized_fill_n(pos, n, value);
   }
 
-  template <class Iter, typename std::enable_if<fstl::is_input_iterator<Iter>::value, int>::type = 0>
+  template <class Iter,
+            typename std::enable_if<fstl::is_input_iterator<Iter>::value,
+                                    int>::type = 0>
   void insert(const_iterator pos, Iter first, Iter last) {
     assert(pos >= begin() && pos <= end());
     size_type n = fstl::distance(first, last);
@@ -332,33 +335,40 @@ private:
 /*****************************************************************************************/
 // 重载比较操作符
 
-// template <class T> bool operator==(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator==(const vector<T> &lhs, const vector<T>
+// &rhs) {
 //   return lhs.size() == rhs.size() &&
 //          fstl::equal(lhs.begin(), lhs.end(), rhs.begin());
 // }
 
-// template <class T> bool operator<(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator<(const vector<T> &lhs, const vector<T> &rhs)
+// {
 //   return fstl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
 //                                         lhs.end());
 // }
 
-// template <class T> bool operator!=(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator!=(const vector<T> &lhs, const vector<T>
+// &rhs) {
 //   return !(lhs == rhs);
 // }
 
-// template <class T> bool operator>(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator>(const vector<T> &lhs, const vector<T> &rhs)
+// {
 //   return rhs < lhs;
 // }
 
-// template <class T> bool operator<=(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator<=(const vector<T> &lhs, const vector<T>
+// &rhs) {
 //   return !(rhs < lhs);
 // }
 
-// template <class T> bool operator>=(const vector<T> &lhs, const vector<T> &rhs) {
+// template <class T> bool operator>=(const vector<T> &lhs, const vector<T>
+// &rhs) {
 //   return !(lhs < rhs);
 // }
 
 // // 重载 fstl 的 swap
-// template <class T> void swap(vector<T> &lhs, vector<T> &rhs) { lhs.swap(rhs); }
+// template <class T> void swap(vector<T> &lhs, vector<T> &rhs) { lhs.swap(rhs);
+// }
 
 }; // namespace fstl

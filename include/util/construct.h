@@ -2,9 +2,9 @@
 
 // #include "../iterator.h"
 // #include "../util.h"
-#include <new>
-#include "utility.h"
 #include "../iterator.h"
+#include "utility.h"
+#include <new>
 
 namespace fstl {
 
