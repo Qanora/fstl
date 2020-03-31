@@ -4,6 +4,8 @@
 
 ![https://travis-ci.org/Qanora/fstl.svg?branch=master](https://travis-ci.org/Qanora/fstl.svg?branch=master)
 
+![https://app.fossa.io/api/projects/git%2Bgithub.com%2FQanora%2Ffstl.svg?type=shield](https://app.fossa.io/api/projects/git%2Bgithub.com%2FQanora%2Ffstl.svg?type=shield)
+
 # 特点：
 
 - [ ]  基本实现STL的内容
