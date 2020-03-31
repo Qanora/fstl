@@ -2,11 +2,12 @@
 
 #include "../allocator.h"
 #include "../iterator.h"
-#include "util/reverse_iterator.h"
+#include "../util/reverse_iterator.h"
 // #include "util/exceptdef.h"
-#include "algorithm/modifyseq.h"
-#include "util/uninitialized.h"
+#include "../algorithm/modifyseq.h"
+#include "../util/uninitialized.h"
 #include <algorithm>
+#include <cassert>
 
 #define INIT_SIZE 16
 namespace fstl {
