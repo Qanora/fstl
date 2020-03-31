@@ -1,21 +1,33 @@
-language : cpp
+language: cpp
 
-               sudo : required dist : bionic
+sudo: required
+dist: bionic
 
-                                          jobs : include : -os : linux compiler
-    : gcc env : -MATRIX_EVAL = "CC=gcc && CXX=g++"
-
-                               - os : osx osx_image : xcode11 env
-    : -MATRIX_EVAL = "CC=clang && CXX=clang++"
-
-                         before_script : -eval "${MATRIX_EVAL}" -
-                                         $CXX-- version
-
-                                             script
-    : -mkdir build && cd./ build - cmake..- make - cd../ bin &&
-                          ./ stltest
-
-                                  branches : only : -master
-
-                                                        notifications : email
-    : false
+jobs:
+  include:
+    - os: linux
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        
+    - os: osx
+      osx_image: xcode11
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++"
+        
+before_script:
+  - eval "${MATRIX_EVAL}"
+  - $CXX --version
+  
+script:
+  - mkdir build && cd ./build
+  - cmake ..
+  - make
+  - cd ../bin && ./stltest
+  
+branches:
+  only:
+  - master
+  
+notifications:
+  email: false
