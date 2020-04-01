@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 #include "../allocator.h"
 #include "../iterator.h"
@@ -35,9 +36,9 @@ public:
   allocator_type get_allocator() { return data_allocator(); }
 
 private:
-  iterator begin_;
-  iterator end_;
-  iterator cap_;
+  iterator begin_ = nullptr;
+  iterator end_ = nullptr;
+  iterator cap_ = nullptr;
   // 构造、复制、移动、析构函数
 public:
   vector() noexcept { fill_init(0, value_type()); }
@@ -283,17 +284,19 @@ private:
     assert(addSize >= 0);
     size_type curSize = fstl::distance(begin_, end_);
     size_type curCapSize = fstl::distance(begin_, cap_);
+    std::cout << std::endl;
 
-    if (curSize + addSize > curCapSize) {
+    if (curSize + addSize > curCapSize) { 
       size_type newCapSize = std::max((int)(curSize + addSize) * 2, INIT_SIZE);
 
       iterator newBegin = get_allocator().allocate(newCapSize);
       uninitialized_move(begin_, end_, newBegin);
 
       begin_ = newBegin;
-      end_ = newBegin + curSize + addSize;
+      // end_ = newBegin + curSize + addSize;
       cap_ = newBegin + newCapSize;
     }
+    end_ = begin_ + curSize + addSize;
   }
 
   void reduce_mem(size_type removeSize) {
