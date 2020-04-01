@@ -1,11 +1,12 @@
 #pragma once
 
 #include <algorithm>
-#include <cassert>
 
+#include "../algorithm/minmax.h"
 #include "../algorithm/modifyseq.h"
 #include "../allocator/allocator.h"
 #include "../allocator/uninitialized.h"
+#include "../debug.h"
 #include "../iterator.h"
 
 #define INIT_SIZE 16
@@ -122,7 +123,6 @@ class vector {
     return static_cast<size_type>(cap_ - begin_);
   }
 
-  // TODO
   void reserve(size_type n) {
     size_type now = size();
     if (n <= now)
@@ -130,6 +130,7 @@ class vector {
     add_mem(n - now);
     end_ = end_ - (n - now);
   }
+
   void shrink_to_fit() {
     get_allocator().deallocate(end_, cap_);
     cap_ = end_;
@@ -138,43 +139,43 @@ class vector {
   // 访问元素相关操作
  public:
   reference operator[](size_type n) {
-    // fstl::FSTL_DEBUG(n < size());
+    FSTL_DEBUG(n < size());
     return *(begin_ + n);
   }
 
   const_reference operator[](size_type n) const {
-    // fstl::FSTL_DEBUG(n < size());
+    FSTL_DEBUG(n < size());
     return *(begin_ + n);
   }
 
   reference at(size_type n) {
-    // fstl::THROW_LENGTH_ERROR_IF(!(n < size()), "vector<T>::at() subscript out
-    // of range");
+    THROW_LENGTH_ERROR_IF(!(n < size()),
+                          "vector<T>::at() subscript out of range");
     return (*this)[n];
   }
   const_reference at(size_type n) const {
-    // fstl::THROW_OUT_OF_RANGE_IF(!(n < size()), "vector<T>::at() subscript out
-    // of range");
+    THROW_OUT_OF_RANGE_IF(!(n < size()),
+                          "vector<T>::at() subscript out of range");
     return (*this)[n];
   }
 
   reference front() {
-    // fstl::FSTL_DEBUG(!empty());
+    FSTL_DEBUG(!empty());
     return *begin_;
   }
 
   const_reference front() const {
-    // fstl::FSTL_DEBUG(!empty());
+    FSTL_DEBUG(!empty());
     return *begin_;
   }
 
   reference back() {
-    // fstl::FSTL_DEBUG(!empty());
+    FSTL_DEBUG(!empty());
     return *(end_ - 1);
   }
 
   const_reference back() const {
-    // fstl::FSTL_DEBUG(!empty());
+    FSTL_DEBUG(!empty());
     return *(end_ - 1);
   }
 
@@ -203,7 +204,7 @@ class vector {
 
   template <class... Args>
   iterator emplace(const_iterator pos, Args&&... args) {
-    assert(pos >= begin() && pos <= end());
+    FSTL_DEBUG(pos >= begin() && pos <= end());
     add_mem(1);
     uninitialized_move(pos, end_ - 1, pos + 1);
     get_allocator().construct(&(*pos), fstl::forward<Args>(args)...);
@@ -230,7 +231,7 @@ class vector {
     emplace(pos, std::move(value));
   }
   iterator insert(const_iterator pos, size_type n, const value_type& value) {
-    assert(pos >= begin() && pos <= end());
+    FSTL_DEBUG(pos >= begin() && pos <= end());
     add_mem(n);
     uninitialized_move(pos, end_ - n, pos + n);
     uninitialized_fill_n(pos, n, value);
@@ -240,7 +241,7 @@ class vector {
             typename std::enable_if<fstl::is_input_iterator<Iter>::value,
                                     int>::type = 0>
   void insert(const_iterator pos, Iter first, Iter last) {
-    assert(pos >= begin() && pos <= end());
+    FSTL_DEBUG(pos >= begin() && pos <= end());
     size_type n = fstl::distance(first, last);
     add_mem(n);
     uninitialized_move(pos, end_ - n, pos + n);
@@ -248,12 +249,12 @@ class vector {
   }
 
   iterator earse(const_iterator pos) {
-    assert(pos >= begin() && pos <= end());
+    FSTL_DEBUG(pos >= begin() && pos <= end());
     earse(pos, pos + 1);
   }
   iterator earse(const_iterator first, const_iterator last) {
-    assert(first >= begin() && first <= end());
-    assert(last >= begin() && last <= end());
+    FSTL_DEBUG(first >= begin() && first <= end());
+    FSTL_DEBUG(last >= begin() && last <= end());
     size_type n = fstl::distance(first, last);
     uninitialized_copy(last, end_, first);
     reduce_mem(n);
@@ -281,26 +282,25 @@ class vector {
 
  private:
   void add_mem(size_type addSize) {
-    assert(addSize >= 0);
+    FSTL_DEBUG(addSize >= 0);
     size_type curSize = fstl::distance(begin_, end_);
     size_type curCapSize = fstl::distance(begin_, cap_);
 
     if (curSize + addSize > curCapSize) {
-      size_type newCapSize = std::max((int)(curSize + addSize) * 2, INIT_SIZE);
+      size_type newCapSize = fstl::max((int)(curSize + addSize) * 2, INIT_SIZE);
 
       iterator newBegin = get_allocator().allocate(newCapSize);
       uninitialized_move(begin_, end_, newBegin);
 
       begin_ = newBegin;
-      // end_ = newBegin + curSize + addSize;
       cap_ = newBegin + newCapSize;
     }
     end_ = begin_ + curSize + addSize;
   }
 
   void reduce_mem(size_type removeSize) {
-    assert(removeSize >= 0);
-    assert(size() >= removeSize);
+    FSTL_DEBUG(removeSize >= 0);
+    FSTL_DEBUG(size() >= removeSize);
 
     size_type curSize = fstl::distance(begin_, end_);
     size_type curCapSize = fstl::distance(begin_, cap_);
