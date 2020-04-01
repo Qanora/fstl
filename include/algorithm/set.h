@@ -1,6 +1,5 @@
 #pragma once
 
-// #include "../util.h"
 namespace fstl {
 // default Ascending order
 template <class InputIerator, class OutputIterator>

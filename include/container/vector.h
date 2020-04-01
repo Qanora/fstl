@@ -4,10 +4,9 @@
 #include <cassert>
 
 #include "../algorithm/modifyseq.h"
-#include "../allocator.h"
+#include "../allocator/allocator.h"
+#include "../allocator/uninitialized.h"
 #include "../iterator.h"
-#include "../util/reverse_iterator.h"
-#include "../util/uninitialized.h"
 
 #define INIT_SIZE 16
 namespace fstl {
