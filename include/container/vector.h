@@ -1,49 +1,49 @@
 #pragma once
-#include <iostream>
 
+#include <algorithm>
+#include <cassert>
+
+#include "../algorithm/modifyseq.h"
 #include "../allocator.h"
 #include "../iterator.h"
 #include "../util/reverse_iterator.h"
-#include "../algorithm/modifyseq.h"
 #include "../util/uninitialized.h"
-#include <algorithm>
-#include <cassert>
 
 #define INIT_SIZE 16
 namespace fstl {
 
-template <class T> class vector {
+template <class T, class Allocator = fstl::allocator<T> >
+class vector {
   static_assert(!std::is_same<bool, T>::value,
                 "vector<bool> is abandoned in fstl");
   // 嵌套型别定义
-public:
+ public:
   typedef fstl::allocator<T> allocator_type;
-  typedef fstl::allocator<T> data_allocator;
 
-  typedef typename allocator_type::value_type value_type;
-  typedef typename allocator_type::pointer pointer;
-  typedef typename allocator_type::const_pointer const_pointer;
-  typedef typename allocator_type::reference reference;
-  typedef typename allocator_type::const_reference const_reference;
-  typedef typename allocator_type::size_type size_type;
-  typedef typename allocator_type::difference_type difference_type;
+  typedef T value_type;
+  typedef value_type* pointer;
+  typedef const value_type* const_pointer;
+  typedef value_type& reference;
+  typedef const value_type& const_reference;
+  typedef size_t size_type;
+  typedef ptrdiff_t difference_type;
 
-  typedef value_type *iterator;
-  typedef const value_type *const_iterator;
+  typedef value_type* iterator;
+  typedef const value_type* const_iterator;
   typedef fstl::reverse_iterator<iterator> reverse_iterator;
   typedef fstl::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  allocator_type get_allocator() { return data_allocator(); }
+  allocator_type get_allocator() { return allocator_type(); }
 
-private:
+ private:
   iterator begin_ = nullptr;
   iterator end_ = nullptr;
   iterator cap_ = nullptr;
   // 构造、复制、移动、析构函数
-public:
+ public:
   vector() noexcept { fill_init(0, value_type()); }
   explicit vector(size_type n) { fill_init(n, value_type()); }
-  vector(size_type n, const value_type &value) { fill_init(n, value); }
+  vector(size_type n, const value_type& value) { fill_init(n, value); }
 
   template <class Iter,
             typename std::enable_if<fstl::is_input_iterator<Iter>::value,
@@ -51,8 +51,8 @@ public:
   vector(Iter first, Iter last) {
     range_init(first, last);
   }
-  vector(const vector &rhs) { range_init(rhs.being(), rhs.end()); }
-  vector(vector &&rhs) noexcept
+  vector(const vector& rhs) { range_init(rhs.being(), rhs.end()); }
+  vector(vector&& rhs) noexcept
       : begin_(rhs.begin_), end_(rhs.end_), cap_(rhs.cap_) {
     rhs.begin_ = nullptr;
     rhs.end_ = nullptr;
@@ -61,14 +61,14 @@ public:
   vector(std::initializer_list<value_type> ilist) {
     range_move(ilist.begin(), ilist.end());
   }
-  vector &operator=(const vector &rhs) {
+  vector& operator=(const vector& rhs) {
     if (&rhs == this)
       return *this;
     ~vector();
     range_init(rhs.begin(), rhs.end());
     return *this;
   }
-  vector &operator=(vector &&rhs) noexcept {
+  vector& operator=(vector&& rhs) noexcept {
     if (&rhs == this)
       return *this;
     ~vector();
@@ -77,7 +77,7 @@ public:
     cap_ = rhs.cap_;
     return *this;
   }
-  vector &operator=(std::initializer_list<value_type> ilist) {
+  vector& operator=(std::initializer_list<value_type> ilist) {
     ~vector();
     *this = vector(ilist);
     return *this;
@@ -87,7 +87,7 @@ public:
     get_allocator().deallocate(begin_);
   }
   // 迭代器相关操作
-public:
+ public:
   iterator begin() noexcept { return begin_; }
   const_iterator begin() const noexcept { return begin_; }
   iterator end() noexcept { return end_; }
@@ -107,7 +107,7 @@ public:
   const_reverse_iterator crbegin() const noexcept { return rbegin(); }
   const_reverse_iterator crend() const noexcept { return rend(); }
   // 容量相关操作
-public:
+ public:
   //容量相关操作
   bool empty() const noexcept { return begin_ == end_; }
 
@@ -137,7 +137,7 @@ public:
   }
 
   // 访问元素相关操作
-public:
+ public:
   reference operator[](size_type n) {
     // fstl::FSTL_DEBUG(n < size());
     return *(begin_ + n);
@@ -183,8 +183,8 @@ public:
   const_pointer data() const noexcept { return begin_; }
 
   // 修改容器相关操作
-public:
-  void assign(size_type n, const value_type &value) {
+ public:
+  void assign(size_type n, const value_type& value) {
     vector tmp(n, value);
     swap(tmp);
   }
@@ -203,33 +203,34 @@ public:
   }
 
   template <class... Args>
-  iterator emplace(const_iterator pos, Args &&... args) {
+  iterator emplace(const_iterator pos, Args&&... args) {
     assert(pos >= begin() && pos <= end());
     add_mem(1);
     uninitialized_move(pos, end_ - 1, pos + 1);
     get_allocator().construct(&(*pos), fstl::forward<Args>(args)...);
   }
 
-  template <class... Args> void emplace_back(Args &&... args) {
+  template <class... Args>
+  void emplace_back(Args&&... args) {
     add_mem(1);
     get_allocator().construct(&(*(end_ - 1)), fstl::forward<Args>(args)...);
   }
 
-  void push_back(const value_type &value) {
+  void push_back(const value_type& value) {
     add_mem(1);
     get_allocator().construct(&(*(end_ - 1)), value);
   }
-  void push_back(value_type &&value) { emplace_back(fstl::move(value)); }
+  void push_back(value_type&& value) { emplace_back(fstl::move(value)); }
 
   void pop_back() { reduce_mem(1); }
 
-  iterator insert(const_iterator pos, const value_type &value) {
+  iterator insert(const_iterator pos, const value_type& value) {
     insert(pos, 1, value);
   }
-  iterator insert(const_iterator pos, value_type &&value) {
+  iterator insert(const_iterator pos, value_type&& value) {
     emplace(pos, std::move(value));
   }
-  iterator insert(const_iterator pos, size_type n, const value_type &value) {
+  iterator insert(const_iterator pos, size_type n, const value_type& value) {
     assert(pos >= begin() && pos <= end());
     add_mem(n);
     uninitialized_move(pos, end_ - n, pos + n);
@@ -262,7 +263,7 @@ public:
   void clear() { reduce_mem(size()); }
 
   void resize(size_type new_size) { resize(new_size, value_type()); }
-  void resize(size_type new_size, const value_type &value) {
+  void resize(size_type new_size, const value_type& value) {
     if (new_size > size()) {
       add_mem(new_size - size());
       fill_init(new_size - size(), value);
@@ -271,7 +272,7 @@ public:
     }
   }
 
-  void swap(vector &rhs) noexcept {
+  void swap(vector& rhs) noexcept {
     if (this != rhs) {
       fstl::swap(begin_, rhs.begin_);
       fstl::swap(end_, rhs.end_);
@@ -279,14 +280,13 @@ public:
     }
   }
 
-private:
+ private:
   void add_mem(size_type addSize) {
     assert(addSize >= 0);
     size_type curSize = fstl::distance(begin_, end_);
     size_type curCapSize = fstl::distance(begin_, cap_);
-    std::cout << std::endl;
 
-    if (curSize + addSize > curCapSize) { 
+    if (curSize + addSize > curCapSize) {
       size_type newCapSize = std::max((int)(curSize + addSize) * 2, INIT_SIZE);
 
       iterator newBegin = get_allocator().allocate(newCapSize);
@@ -318,13 +318,15 @@ private:
     }
   }
 
-  template <class Iter> void range_move(Iter first, Iter last) {
+  template <class Iter>
+  void range_move(Iter first, Iter last) {
     size_type size = fstl::distance(first, last);
     add_mem(size);
     uninitialized_move(first, last, end_ - size);
   }
 
-  template <class Iter> void range_init(Iter first, Iter last) {
+  template <class Iter>
+  void range_init(Iter first, Iter last) {
     size_type size = fstl::distance(first, last);
     add_mem(size);
     uninitialized_copy(first, last, end_ - size);
@@ -374,4 +376,4 @@ private:
 // template <class T> void swap(vector<T> &lhs, vector<T> &rhs) { lhs.swap(rhs);
 // }
 
-}; // namespace fstl
+};  // namespace fstl

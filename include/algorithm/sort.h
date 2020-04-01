@@ -28,4 +28,4 @@ void sort(RandomIterator first, RandomIterator last, BinaryPredicate pred) {
   sort(first, p1, pred);
   sort(p1 + 1, last, pred);
 }
-}; // namespace fstl
+};  // namespace fstl

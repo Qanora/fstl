@@ -3,7 +3,7 @@
 namespace fstl {
 
 template <class InputIterator, class T>
-InputIterator find(InputIterator first, InputIterator last, const T &val) {
+InputIterator find(InputIterator first, InputIterator last, const T& val) {
   for (; first != last; ++first) {
     if (*first == val) {
       break;
@@ -12,4 +12,4 @@ InputIterator find(InputIterator first, InputIterator last, const T &val) {
   return first;
 }
 
-}; // namespace fstl
+};  // namespace fstl

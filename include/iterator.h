@@ -1,8 +1,9 @@
 
 #pragma once
 
+#include <cstddef>  //ptrdiff_t
+
 #include "type_traits.h"
-#include <cstddef> //ptrdiff_t
 
 namespace fstl {
 
@@ -12,8 +13,11 @@ struct forward_iterator_tag : public input_iterator_tag {};
 struct bidirectional_iterator_tag : public forward_iterator_tag {};
 struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
-template <class Category, class T, class Distance = ptrdiff_t,
-          class Pointer = T *, class Reference = T &>
+template <class Category,
+          class T,
+          class Distance = ptrdiff_t,
+          class Pointer = T*,
+          class Reference = T&>
 struct iterator {
   typedef Category iterator_category;
   typedef T value_type;
@@ -22,22 +26,27 @@ struct iterator {
   typedef Distance difference_type;
 };
 
-template <class T> struct has_iterator_cat {
-private:
+template <class T>
+struct has_iterator_cat {
+ private:
   struct two {
     char a;
     char n;
   };
-  template <class U> static two test(...);
-  template <class U> static char test(typename U::iterator_category * = 0);
+  template <class U>
+  static two test(...);
+  template <class U>
+  static char test(typename U::iterator_category* = 0);
 
-public:
+ public:
   static const bool value = sizeof(test<T>(0)) == sizeof(char);
 };
 
-template <class Iterator, bool> struct iterator_traits_impl {};
+template <class Iterator, bool>
+struct iterator_traits_impl {};
 
-template <class Iterator> struct iterator_traits_impl<Iterator, true> {
+template <class Iterator>
+struct iterator_traits_impl<Iterator, true> {
   typedef typename Iterator::iterator_category iterator_category;
   typedef typename Iterator::value_type value_type;
   typedef typename Iterator::pointer pointer;
@@ -45,7 +54,8 @@ template <class Iterator> struct iterator_traits_impl<Iterator, true> {
   typedef typename Iterator::difference_type difference_type;
 };
 
-template <class Iterator, bool> struct iterator_traits_helper {};
+template <class Iterator, bool>
+struct iterator_traits_helper {};
 
 template <class Iterator>
 struct iterator_traits_helper<Iterator, true>
@@ -61,26 +71,29 @@ struct iterator_traits
     : public iterator_traits_helper<Iterator,
                                     has_iterator_cat<Iterator>::value> {};
 
-template <class T> struct iterator_traits<T *> {
+template <class T>
+struct iterator_traits<T*> {
   typedef random_access_iterator_tag iterator_category;
   typedef T value_type;
-  typedef T *pointer;
-  typedef T &reference;
+  typedef T* pointer;
+  typedef T& reference;
   typedef ptrdiff_t difference_type;
 };
 
-template <class T> struct iterator_traits<const T *> {
+template <class T>
+struct iterator_traits<const T*> {
   typedef random_access_iterator_tag iterator_category;
   typedef T value_type;
-  typedef const T *pointer;
-  typedef const T &reference;
+  typedef const T* pointer;
+  typedef const T& reference;
   typedef ptrdiff_t difference_type;
 };
 
 template <class T, class U, bool = has_iterator_cat<iterator_traits<T>>::value>
 struct has_iterator_cat_of
-    : public m_bool_constant<std::is_convertible<
-          typename iterator_traits<T>::iterator_category, U>::value> {};
+    : public m_bool_constant<
+          std::is_convertible<typename iterator_traits<T>::iterator_category,
+                              U>::value> {};
 
 template <class T, class U>
 struct has_iterator_cat_of<T, U, false> : public m_false_type {};
@@ -124,9 +137,10 @@ distance_dispatch(InputIterator first, InputIterator last, input_iterator_tag) {
 
 // distance 的 random_access_iterator_tag 的版本
 template <class RandomIter>
-typename iterator_traits<RandomIter>::difference_type
-distance_dispatch(RandomIter first, RandomIter last,
-                  random_access_iterator_tag) {
+typename iterator_traits<RandomIter>::difference_type distance_dispatch(
+    RandomIter first,
+    RandomIter last,
+    random_access_iterator_tag) {
   return last - first;
 }
 
@@ -139,14 +153,15 @@ typename iterator_traits<Iter>::difference_type distance(Iter first,
 
 // advance 的 input_iterator_tag 的版本
 template <class InputIterator, class Distance>
-void advance_dispatch(InputIterator &i, Distance n, input_iterator_tag) {
+void advance_dispatch(InputIterator& i, Distance n, input_iterator_tag) {
   while (n--)
     ++i;
 }
 
 // advance 的 bidirectional_iterator_tag 的版本
 template <class BidirectionalIterator, class Distance>
-void advance_dispatch(BidirectionalIterator &i, Distance n,
+void advance_dispatch(BidirectionalIterator& i,
+                      Distance n,
                       bidirectional_iterator_tag) {
   if (n >= 0)
     while (n--)
@@ -158,12 +173,13 @@ void advance_dispatch(BidirectionalIterator &i, Distance n,
 
 // advance 的 random_access_iterator_tag 的版本
 template <class RandomIter, class Distance>
-void advance_dispatch(RandomIter &i, Distance n, random_access_iterator_tag) {
+void advance_dispatch(RandomIter& i, Distance n, random_access_iterator_tag) {
   i += n;
 }
 
-template <class Iter, class Distance> void advance(Iter &i, Distance n) {
+template <class Iter, class Distance>
+void advance(Iter& i, Distance n) {
   advance_dispatch(i, n, typename iterator_traits<Iter>::iterator_category());
 }
 
-}; // namespace fstl
+};  // namespace fstl

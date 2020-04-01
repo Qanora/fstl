@@ -10,7 +10,9 @@ void pop_heap(RandomIterator first, RandomIterator last, Compare comp) {
 }
 
 template <class RandomIterator, class Compare>
-static void up(RandomIterator first, RandomIterator last, RandomIterator head,
+static void up(RandomIterator first,
+               RandomIterator last,
+               RandomIterator head,
                Compare comp) {
   if (first != last) {
     int index = last - head;
@@ -27,7 +29,9 @@ static void up(RandomIterator first, RandomIterator last, RandomIterator head,
 }
 
 template <class RandomIterator, class Compare>
-static void down(RandomIterator first, RandomIterator last, RandomIterator head,
+static void down(RandomIterator first,
+                 RandomIterator last,
+                 RandomIterator head,
                  Compare comp) {
   if (first != last) {
     auto index = first - head;
@@ -45,4 +49,4 @@ static void down(RandomIterator first, RandomIterator last, RandomIterator head,
   }
 }
 
-}; // namespace fstl
+};  // namespace fstl
