@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../allocator/construct.h"
 #include "../util.h"
+#include "construct.h"
 
 namespace fstl {
 

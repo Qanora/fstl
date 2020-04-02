@@ -1,13 +1,9 @@
 #pragma once
 
-#include <algorithm>
-
-#include "../algorithm/minmax.h"
-#include "../algorithm/modifyseq.h"
-#include "../allocator/allocator.h"
-#include "../allocator/uninitialized.h"
+#include "../algorithm.h"
 #include "../debug.h"
 #include "../iterator.h"
+#include "../memory.h"
 
 #define INIT_SIZE 16
 namespace fstl {
