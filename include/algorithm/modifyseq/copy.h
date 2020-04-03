@@ -3,7 +3,7 @@
 #include "../../iterator.h"
 #include "../../util.h"
 
-namespace fstl {
+namespace detail {
 /*****************************************************************************************/
 // copy_n
 // 把 [first, first + n)区间上的元素拷贝到 [result, result + n)上
@@ -27,17 +27,19 @@ OutputIter uncheck_copy_n(RandomIter first,
   auto last = first + n;
   return copy(first, last, result);
 }
-
+};  // namespace detail
+namespace fstl {
 template <class InputIter, class Size, class OutputIter>
 OutputIter copy_n(InputIter first, Size n, OutputIter result) {
-  return uncheck_copy_n(first, n, result,
-                        fstl::iterator_traits<InputIter>::iterator_category());
+  return detail::uncheck_copy_n(
+      first, n, result, fstl::iterator_traits<InputIter>::iterator_category());
 }
-
+};  // namespace fstl
 /*****************************************************************************************/
 // copy
 // 把 [first, last)区间内的元素拷贝到 [result, result + (last - first))内
 /*****************************************************************************************/
+namespace detail {
 template <class InputIter, class OutputIter>
 OutputIter uncheck_copy_cat(InputIter first,
                             InputIter last,
@@ -64,7 +66,7 @@ template <class InputIter, class OutputIter>
 OutputIter uncheck_copy(InputIter first, InputIter last, OutputIter result) {
   return uncheck_copy_cat(
       first, last, result,
-      typename iterator_traits<InputIter>::iterator_category());
+      typename fstl::iterator_traits<InputIter>::iterator_category());
 }
 
 template <class Tp, class Up>
@@ -78,16 +80,19 @@ uncheck_copy(Tp* first, Tp* last, Up* result) {
     std::memmove(result, first, n * sizeof(Up));
   return result + n;
 }
+};  // namespace detail
 
+namespace fstl {
 template <class InputIter, class OutputIter>
 OutputIter copy(InputIter first, InputIter last, OutputIter result) {
-  return uncheck_copy(first, last, result);
+  return detail::uncheck_copy(first, last, result);
 }
+};  // namespace fstl
 
 /*****************************************************************************************/
 // copy_if
 /*****************************************************************************************/
-
+namespace fstl {
 template <class InputIter, class OutputIter, class UnaryPredicate>
 OutputIter copy_if(InputIter first,
                    InputIter last,
@@ -100,15 +105,16 @@ OutputIter copy_if(InputIter first,
   }
   return result;
 }
-
+};  // namespace fstl
 /*****************************************************************************************/
 // copy_backword
 /*****************************************************************************************/
+namespace detail {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 copy_backword_cat(BidiIter1 first,
                             BidiIter1 last,
                             BidiIter2 result,
-                            bidirectional_iterator_tag) {
+                            fstl::bidirectional_iterator_tag) {
   while (last != first) {
     *(--result) = *(--last);
   }
@@ -119,14 +125,15 @@ template <class BidiIter1, class BidiIter2>
 BidiIter2 copy_backword_cat(BidiIter1 first,
                             BidiIter1 last,
                             BidiIter2 result,
-                            random_access_iterator_tag) {
+                            fstl::random_access_iterator_tag) {
   auto size = fstl::distance(first, last);
   return fstl::copy(first, last, result - size);
 }
-
+};  // namespace detail
+namespace fstl {
 template <class BidiIter1, class BidiIter2>
 BidiIter1 copy_backword(BidiIter1 first, BidiIter1 last, BidiIter2 result) {
-  return copy_backword_cat(first, last, result,
-                           iterator_traits<BidiIter1>::iterator_category());
+  return detail::copy_backword_cat(
+      first, last, result, iterator_traits<BidiIter1>::iterator_category());
 }
 };  // namespace fstl

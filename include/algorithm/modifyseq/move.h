@@ -3,12 +3,11 @@
 #include "../../iterator.h"
 #include "../../util.h"
 
-namespace fstl {
 /*****************************************************************************************/
 // move
 // 把 [first, last)区间内的元素移动到 [result, result + (last - first))内
 /*****************************************************************************************/
-// input_iterator_tag 版本
+namespace detail {
 template <class InputIter, class OutputIter>
 OutputIter unchecked_move_cat(InputIter first,
                               InputIter last,
@@ -49,20 +48,23 @@ unchecked_move(Tp* first, Tp* last, Up* result) {
     std::memmove(result, first, n * sizeof(Up));
   return result + n;
 }
-
+};  // namespace detail
+namespace fstl {
 template <class InputIter, class OutputIter>
 OutputIter move(InputIter first, InputIter last, OutputIter result) {
-  return unchecked_move(first, last, result);
+  return detail::unchecked_move(first, last, result);
 }
+};  // namespace fstl
 
 /*****************************************************************************************/
 // move_backword
 /*****************************************************************************************/
+namespace detail {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 move_backword_cat(BidiIter1 first,
                             BidiIter1 last,
                             BidiIter2 result,
-                            bidirectional_iterator_tag) {
+                            fstl::bidirectional_iterator_tag) {
   while (last != first) {
     *(--result) = fstl::move(*(--last));
   }
@@ -73,14 +75,15 @@ template <class BidiIter1, class BidiIter2>
 BidiIter2 move_backword_cat(BidiIter1 first,
                             BidiIter1 last,
                             BidiIter2 result,
-                            random_access_iterator_tag) {
+                            fstl::random_access_iterator_tag) {
   auto size = fstl::distance(first, last);
   return move(first, last, result - size);
 }
-
+};  // namespace detail
+namespace fstl {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 move_backword(BidiIter1 first, BidiIter1 last, BidiIter2 result) {
-  return move_backword_cat(first, last,
-                           iterator_traits<BidiIter1>::iterator_category());
+  return detail::move_backword_cat(
+      first, last, fstl::iterator_traits<BidiIter1>::iterator_category());
 }
 };  // namespace fstl

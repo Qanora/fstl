@@ -5,7 +5,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace fstl {
+namespace detail {
 
 template <size_t n>
 using index_constant = std::integral_constant<size_t, n>;
@@ -81,10 +81,13 @@ class binder {
   std::function<std::remove_reference_t<std::remove_pointer_t<Fn>>> f_;
   binder_list<Args...> argumentList_;
 };
+};  // namespace detail
 
+namespace fstl {
 template <class Fn, class... Args>
-binder<Fn, Args...> bind(Fn&& f, Args&&... args) {
-  return binder<Fn, Args...>{std::forward<Fn>(f), std::forward<Args>(args)...};
+detail::binder<Fn, Args...> bind(Fn&& f, Args&&... args) {
+  return detail::binder<Fn, Args...>{std::forward<Fn>(f),
+                                     std::forward<Args>(args)...};
 }
 
 };  // namespace fstl
