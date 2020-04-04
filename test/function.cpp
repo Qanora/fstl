@@ -1,8 +1,14 @@
 #include <iostream>
 
 #include "../include/functional.h"
+void test(int a) {
+  std::cout << a << std::endl;
+}
 
 int main() {
+  fstl::function<void(int)> b(test);
+  b(1);
+
   int i = 0;
   auto fn = [i](std::string const& s) mutable {
     std::cout << ++i << ". " << s << std::endl;

@@ -1,6 +1,7 @@
 // refer
 // https://stackoverflow.com/questions/18453145/how-is-stdfunction-implemented
-
+#pragma once
+#include <memory>
 namespace fstl {
 template <typename T>
 class function;
@@ -85,7 +86,11 @@ class function<R(Args...)> {
   // other constructors, from nullptr, from function pointers
 
   R operator()(Args&&... args) {
-    return this->invoke_f(this->data_ptr.get(), std::forward<Args>(args)...);
+    return this->invoke_f(this->data_ptr.get(), fstl::forward<Args>(args)...);
+  }
+  template <typename... OtherArgs>
+  R operator()(OtherArgs&&... args) {
+    return this->invoke_f(this->data_ptr.get(), fstl::forward<Args>(args)...);
   }
 };
 
