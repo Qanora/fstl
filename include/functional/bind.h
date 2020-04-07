@@ -40,14 +40,14 @@ class callee_list {
       : boundedArgs_{fstl::forward<TArgs>(args)...} {}
 
   template <class T,
-            std::enable_if_t<(fstl::is_placeholder<std::remove_reference_t<T>>::
-                                  value == 0)>* = nullptr>
+            fstl::enable_if_t<(fstl::is_placeholder<std::remove_reference_t<
+                                   T>>::value == 0)>* = nullptr>
   constexpr decltype(auto) operator[](T&& t) noexcept {
     return fstl::forward<T>(t);
   }
 
   template <class T,
-            std::enable_if_t<(fstl::is_placeholder<T>::value != 0)>* = nullptr>
+            fstl::enable_if_t<(fstl::is_placeholder<T>::value != 0)>* = nullptr>
   constexpr decltype(auto) operator[](T) noexcept {
     return fstl::get<fstl::is_placeholder<T>::value - 1>(boundedArgs_);
   }
@@ -70,7 +70,7 @@ class binder {
   // noexcept(noexcept(call(std::make_index_sequence<sizeof...(Args)>{},
   // std::declval<Args>()...)))
   {
-    return call(std::make_index_sequence<sizeof...(Args)>{},
+    return call(fstl::make_index_sequence<sizeof...(Args)>{},
                 fstl::forward<CallArgs>(args)...);
   }
 
@@ -82,9 +82,9 @@ class binder {
   //     ((std::cout << ints << ' '),...);
   //     std::cout << '\n';
   // }
-
   template <class... CallArgs, size_t... Seq>
-  constexpr decltype(auto) call(std::index_sequence<Seq...>, CallArgs&&... args)
+  constexpr decltype(auto) call(fstl::index_sequence<Seq...>,
+                                CallArgs&&... args)
   // noexcept(noexcept(f_(this->binder_list<CallArgs...>{std::declval<CallArgs>()...}[this->argumentList_[index_constant<Seq>{}]]...)))
   {
     auto call_list = callee_list<CallArgs...>{fstl::forward<CallArgs>(args)...};

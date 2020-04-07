@@ -38,7 +38,7 @@ OutputIter unchecked_move(InputIter first, InputIter last, OutputIter result) {
 
 // 为 trivially_copy_assignable 类型提供特化版本
 template <class Tp, class Up>
-typename std::enable_if<
+typename fstl::enable_if<
     std::is_same<typename std::remove_const<Tp>::type, Up>::value &&
         std::is_trivially_move_assignable<Up>::value,
     Up*>::type

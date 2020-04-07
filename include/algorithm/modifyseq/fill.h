@@ -16,10 +16,10 @@ OutputIter unchecked_fill_n(OutputIter first, Size n, const T& value) {
 }
 
 template <class Tp, class Size, class Up>
-typename std::enable_if<std::is_integral<Tp>::value && sizeof(Tp) == 1 &&
-                            !std::is_same<Tp, bool>::value &&
-                            std::is_integral<Up>::value && sizeof(Up) == 1,
-                        Tp*>::type
+typename fstl::enable_if<std::is_integral<Tp>::value && sizeof(Tp) == 1 &&
+                             !std::is_same<Tp, bool>::value &&
+                             std::is_integral<Up>::value && sizeof(Up) == 1,
+                         Tp*>::type
 unchecked_fill_n(Tp* first, Size n, Up value) {
   if (n > 0) {
     std::memset(first, (unsigned char)value, (size_t)(n));

@@ -42,8 +42,8 @@ class vector {
   vector(size_type n, const value_type& value) { fill_init(n, value); }
 
   template <class Iter,
-            typename std::enable_if<fstl::is_input_iterator<Iter>::value,
-                                    int>::type = 0>
+            typename fstl::enable_if<fstl::is_input_iterator<Iter>::value,
+                                     int>::type = 0>
   vector(Iter first, Iter last) {
     range_init(first, last);
   }
@@ -186,8 +186,8 @@ class vector {
   }
 
   template <class Iter,
-            typename std::enable_if<fstl::is_input_iterator<Iter>::value,
-                                    int>::type = 0>
+            typename fstl::enable_if<fstl::is_input_iterator<Iter>::value,
+                                     int>::type = 0>
   void assgin(Iter first, Iter last) {
     vector tmp(first, last);
     swap(tmp);
@@ -234,8 +234,8 @@ class vector {
   }
 
   template <class Iter,
-            typename std::enable_if<fstl::is_input_iterator<Iter>::value,
-                                    int>::type = 0>
+            typename fstl::enable_if<fstl::is_input_iterator<Iter>::value,
+                                     int>::type = 0>
   void insert(const_iterator pos, Iter first, Iter last) {
     FSTL_DEBUG(pos >= begin() && pos <= end());
     size_type n = fstl::distance(first, last);

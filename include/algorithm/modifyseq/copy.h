@@ -70,7 +70,7 @@ OutputIter uncheck_copy(InputIter first, InputIter last, OutputIter result) {
 }
 
 template <class Tp, class Up>
-typename std::enable_if<
+typename fstl::enable_if<
     std::is_same<typename std::remove_const<Tp>::type, Up>::value &&
         std::is_trivially_copy_assignable<Up>::value,
     Up*>::type
