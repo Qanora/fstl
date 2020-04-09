@@ -6,6 +6,9 @@
 // fill_n
 // 从 first 位置开始填充 n 个值
 /*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class OutputIter, class Size, class T>
 OutputIter unchecked_fill_n(OutputIter first, Size n, const T& value) {
@@ -27,7 +30,6 @@ unchecked_fill_n(Tp* first, Size n, Up value) {
   return first + n;
 }
 };  // namespace detail
-namespace fstl {
 template <class OutputIter, class Size, class T>
 OutputIter fill_n(OutputIter first, Size n, const T& value) {
   return detail::unchecked_fill_n(first, n, value);
@@ -37,6 +39,9 @@ OutputIter fill_n(OutputIter first, Size n, const T& value) {
 // fill
 // 为 [first, last)区间内的所有元素填充新值
 /*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class ForwardIter, class T>
 void fill_cat(ForwardIter first,
@@ -56,7 +61,6 @@ void fill_cat(RandomIter first,
   fill_n(first, last - first, value);
 }
 };  // namespace detail
-namespace fstl {
 template <class ForwardIter, class T>
 void fill(ForwardIter first, ForwardIter last, const T& value) {
   detail::fill_cat(first, last, value,

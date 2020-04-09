@@ -3,11 +3,9 @@
 #include "../../iterator.h"
 #include "../../util.h"
 
+namespace fstl {
 namespace detail {
-/*****************************************************************************************/
-// copy_n
-// 把 [first, first + n)区间上的元素拷贝到 [result, result + n)上
-/*****************************************************************************************/
+
 template <class InputIter, class Size, class OutputIter>
 OutputIter uncheck_copy_n(InputIter first,
                           Size n,
@@ -28,17 +26,15 @@ OutputIter uncheck_copy_n(RandomIter first,
   return copy(first, last, result);
 }
 };  // namespace detail
-namespace fstl {
 template <class InputIter, class Size, class OutputIter>
 OutputIter copy_n(InputIter first, Size n, OutputIter result) {
   return detail::uncheck_copy_n(
       first, n, result, fstl::iterator_traits<InputIter>::iterator_category());
 }
 };  // namespace fstl
-/*****************************************************************************************/
-// copy
-// 把 [first, last)区间内的元素拷贝到 [result, result + (last - first))内
-/*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class InputIter, class OutputIter>
 OutputIter uncheck_copy_cat(InputIter first,
@@ -81,8 +77,6 @@ uncheck_copy(Tp* first, Tp* last, Up* result) {
   return result + n;
 }
 };  // namespace detail
-
-namespace fstl {
 template <class InputIter, class OutputIter>
 OutputIter copy(InputIter first, InputIter last, OutputIter result) {
   return detail::uncheck_copy(first, last, result);
@@ -109,6 +103,9 @@ OutputIter copy_if(InputIter first,
 /*****************************************************************************************/
 // copy_backword
 /*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 copy_backword_cat(BidiIter1 first,
@@ -130,7 +127,6 @@ BidiIter2 copy_backword_cat(BidiIter1 first,
   return fstl::copy(first, last, result - size);
 }
 };  // namespace detail
-namespace fstl {
 template <class BidiIter1, class BidiIter2>
 BidiIter1 copy_backword(BidiIter1 first, BidiIter1 last, BidiIter2 result) {
   return detail::copy_backword_cat(

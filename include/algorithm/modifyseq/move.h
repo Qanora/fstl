@@ -7,6 +7,9 @@
 // move
 // 把 [first, last)区间内的元素移动到 [result, result + (last - first))内
 /*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class InputIter, class OutputIter>
 OutputIter unchecked_move_cat(InputIter first,
@@ -49,7 +52,6 @@ unchecked_move(Tp* first, Tp* last, Up* result) {
   return result + n;
 }
 };  // namespace detail
-namespace fstl {
 template <class InputIter, class OutputIter>
 OutputIter move(InputIter first, InputIter last, OutputIter result) {
   return detail::unchecked_move(first, last, result);
@@ -59,6 +61,9 @@ OutputIter move(InputIter first, InputIter last, OutputIter result) {
 /*****************************************************************************************/
 // move_backword
 /*****************************************************************************************/
+
+namespace fstl {
+
 namespace detail {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 move_backword_cat(BidiIter1 first,
@@ -80,7 +85,6 @@ BidiIter2 move_backword_cat(BidiIter1 first,
   return move(first, last, result - size);
 }
 };  // namespace detail
-namespace fstl {
 template <class BidiIter1, class BidiIter2>
 BidiIter2 move_backword(BidiIter1 first, BidiIter1 last, BidiIter2 result) {
   return detail::move_backword_cat(

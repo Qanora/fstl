@@ -44,9 +44,9 @@ class shared_ptr_count {
     if (nullptr != pn) {
       --(*pn);
       if (0 == *pn) {
+        pn = nullptr;
         delete p;
-        // TODO
-        // delete pn;
+        delete pn;
       }
       pn = nullptr;
     }
