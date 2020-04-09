@@ -19,7 +19,7 @@ class function<R(Args...)> {
   //   the above function pointer types, so we need some cast
   template <typename Functor>
   static R invoke_fn(Functor* fn, Args&&... args) {
-    return (*fn)(std::forward<Args>(args)...);
+    return (*fn)(fstl::forward<Args>(args)...);
   }
 
   template <typename Functor>

@@ -89,12 +89,12 @@ struct iterator_traits<const T*> {
 
 template <class T, class U, bool = has_iterator_cat<iterator_traits<T>>::value>
 struct has_iterator_cat_of
-    : public m_bool_constant<
+    : public bool_constant<
           std::is_convertible<typename iterator_traits<T>::iterator_category,
                               U>::value> {};
 
 template <class T, class U>
-struct has_iterator_cat_of<T, U, false> : public m_false_type {};
+struct has_iterator_cat_of<T, U, false> : public false_type {};
 
 template <class Iter>
 struct is_input_iterator
@@ -117,8 +117,8 @@ struct is_random_access_iterator
     : public has_iterator_cat_of<Iter, random_access_iterator_tag> {};
 
 template <class Iterator>
-struct is_iterator
-    : public m_bool_constant<is_input_iterator<Iterator>::value ||
-                             is_output_iterator<Iterator>::value> {};
+struct is_iterator : public bool_constant<is_input_iterator<Iterator>::value ||
+                                          is_output_iterator<Iterator>::value> {
+};
 
 };  // namespace fstl

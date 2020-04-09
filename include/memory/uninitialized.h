@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../algorithm.h"
 #include "../type_traits.h"
 
 namespace fstl {
