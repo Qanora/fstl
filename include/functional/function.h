@@ -2,21 +2,17 @@
 // https://stackoverflow.com/questions/18453145/how-is-stdfunction-implemented
 #pragma once
 #include <memory>
+
 namespace fstl {
 template <typename T>
 class function;
 
 template <typename R, typename... Args>
 class function<R(Args...)> {
-  // function pointer types for the type-erasure behaviors
-  // all these char* parameters are actually casted from some functor type
   typedef R (*invoke_fn_t)(char*, Args&&...);
   typedef void (*construct_fn_t)(char*, char*);
   typedef void (*destroy_fn_t)(char*);
 
-  // type-aware generic functions for invoking
-  // the specialization of these functions won't be capable with
-  //   the above function pointer types, so we need some cast
   template <typename Functor>
   static R invoke_fn(Functor* fn, Args&&... args) {
     return (*fn)(fstl::forward<Args>(args)...);

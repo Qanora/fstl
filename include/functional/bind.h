@@ -1,9 +1,4 @@
-
 // refer https://gist.github.com/Redchards/c5be14c2998f1ca1d757
-
-// #include <functional>
-// #include <tuple>
-// #include <type_traits>
 #pragma once
 #include "../util.h"
 #include "function.h"
@@ -64,12 +59,8 @@ class binder {
       : f_{fstl::forward<TFn>(f)},
         argumentList_{fstl::forward<TArgs>(args)...} {}
 
-  // Please C++, give me a way of detecting noexcept :'(
   template <class... CallArgs>
-  constexpr decltype(auto) operator()(CallArgs&&... args)
-  // noexcept(noexcept(call(std::make_index_sequence<sizeof...(Args)>{},
-  // std::declval<Args>()...)))
-  {
+  constexpr decltype(auto) operator()(CallArgs&&... args) {
     return call(fstl::make_index_sequence<sizeof...(Args)>{},
                 fstl::forward<CallArgs>(args)...);
   }
@@ -84,12 +75,8 @@ class binder {
   // }
   template <class... CallArgs, size_t... Seq>
   constexpr decltype(auto) call(fstl::index_sequence<Seq...>,
-                                CallArgs&&... args)
-  // noexcept(noexcept(f_(this->binder_list<CallArgs...>{std::declval<CallArgs>()...}[this->argumentList_[index_constant<Seq>{}]]...)))
-  {
+                                CallArgs&&... args) {
     auto call_list = callee_list<CallArgs...>{fstl::forward<CallArgs>(args)...};
-    // auto list = {(call_list[argumentList_[index_constant<Seq>{}]])...};
-    // return f_(1);
     return f_((call_list[argumentList_[index_constant<Seq>{}]])...);
   }
 

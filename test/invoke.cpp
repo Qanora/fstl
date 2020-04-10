@@ -29,7 +29,8 @@ int main() {
   fstl::invoke(&Foo::print_add, foo, 1);
 
   // invoke (access) a data member
-  std::cout << "num_: " << std::invoke(&Foo::num_, foo) << '\n';
+  // auto c = std::invoke(&Foo::num_, foo);
+  std::cout << "num_: " << fstl::invoke(&Foo::num_, foo) << '\n';
 
   // invoke a function object
   fstl::invoke(PrintNum(), 18);
