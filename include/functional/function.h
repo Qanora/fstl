@@ -86,7 +86,8 @@ class function<R(Args...)> {
   }
   template <typename... OtherArgs>
   R operator()(OtherArgs&&... args) {
-    return this->invoke_f(this->data_ptr.get(), fstl::forward<Args>(args)...);
+    return this->invoke_f(this->data_ptr.get(),
+                          fstl::forward<OtherArgs>(args)...);
   }
 };
 

@@ -34,17 +34,15 @@ class callee_list {
   constexpr callee_list(TArgs&&... args) noexcept
       : boundedArgs_{fstl::forward<TArgs>(args)...} {}
 
-  template <class T,
-            fstl::enable_if_t<(fstl::is_placeholder<std::remove_reference_t<
-                                   T>>::value == 0)>* = nullptr>
+  template <class T>
   constexpr decltype(auto) operator[](T&& t) noexcept {
-    return fstl::forward<T>(t);
-  }
-
-  template <class T,
-            fstl::enable_if_t<(fstl::is_placeholder<T>::value != 0)>* = nullptr>
-  constexpr decltype(auto) operator[](T) noexcept {
-    return fstl::get<fstl::is_placeholder<T>::value - 1>(boundedArgs_);
+    if constexpr (fstl::is_placeholder<std::remove_reference_t<T>>::value ==
+                  0) {
+      return fstl::forward<T>(t);
+    } else {
+      return fstl::get<fstl::is_placeholder<std::remove_reference_t<T>>::value -
+                       1>(boundedArgs_);
+    }
   }
 
  private:

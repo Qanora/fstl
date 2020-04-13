@@ -1,4 +1,7 @@
+#pragma once
 #include <type_traits>
+
+namespace fstl {
 
 namespace detail {
 
@@ -30,7 +33,6 @@ struct invoke_result {
 };
 };  // namespace detail
 
-namespace fstl {
 template <class F, class... Args>
 struct invoke_result : detail::invoke_result<F, Args...> {};
 
